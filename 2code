@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+    int data;
+    struct node *next;
+};
+void push(struct node** top, int data);
+int pop(struct node** top);
+struct queue
+{
+    struct node *stack_1;
+    struct node *stack_2;
+};
+void enqueue(struct queue *q, int i)
+{
+    push(&q->stack_1, i);
+}
+void dequeue(struct queue *q)
+{
+    int i;
+    if (q->stack_1 == NULL && q->stack_2 == NULL) {
+        printf("queue is empty");
+        return;
+    }
+    if (q->stack_2 == NULL) {
+        while (q->stack_1 != NULL) {
+        i = pop(&q->stack_1);
+        push(&q->stack_2, i);
+        }
+    }
+    i = pop(&q->stack_2);
+    printf("%d\n", i);
+}
+void push(struct node** top, int data)
+{
+    struct node* new_node = (struct node*) malloc(sizeof(struct node));
+        if (new_node == NULL) {
+            printf("Stack overflow \n");
+            return;
+        }
+    new_node->data = data;
+    new_node->next = (*top);
+    (*top) = new_node;
+}
+int pop(struct node** top)
+{
+    int b;
+    struct node *p;
+    if (*top == NULL) {
+        printf("Stack underflow \n");
+        return 0;
+    }
+    else {
+        p = *top;
+        b = p->data;
+        *top = p->next;
+        free(p);
+        return b;
+    }
+}
+void display(struct node *top_1,struct node *top_2)
+{
+    while (top_1 != NULL) {
+        printf("%d\n", top_1->data);
+        top_1 = top_1->next;
+    }
+    while (top_2 != NULL) {
+        printf("%d\n", top_2->data);
+        top_2 = top_2->next;
+    }
+}
+int main()
+{
+    struct queue *q = (struct queue*)malloc(sizeof(struct queue));
+    int l = 0, a;
+    char ch = 'y';
+    q->stack_1 = NULL;
+    q->stack_2 = NULL;
+    while (ch == 'y'||ch == 'Y') {
+        printf("enter ur choice\n1.add to queue\n2.remove from queue\n3.display\n4.exit\n");
+        scanf("%d", &l);
+        switch(l) {
+            case 1 : printf("enter the element to be added to queue\n");
+                     scanf("%d", &a);
+                     enqueue(q, a);
+                     break;
+            case 2 : dequeue(q);
+                     break;
+            case 3 : display(q->stack1, q->stack2);
+                     break;
+            case 4 : exit(1);
+                     break;
+            default : printf("invalid\n");
+                      break;
+        }
+    }
+}
